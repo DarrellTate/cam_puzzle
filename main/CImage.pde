@@ -78,11 +78,11 @@ class CImage {
   
   // Returns if the mouse is within the image
   public boolean containsMouse(int x, int y){
-    try {
-      return alpha(image.pixels[(y-this.y)*image.width+(x-this.x)]) != 0;
-    } catch (Exception e) {
-      return false;
-    }
+    if (x > this.x && x < this.x + getWidth())
+      if (y > this.y && y < this.y + getHeight())
+        if (alpha(image.pixels[(y-this.y) * image.width+(x-this.x)]) != 0)
+          return true;
+    return false;
   }
   
   // === Setters ===
