@@ -1,0 +1,129 @@
+/*
+* Class used to represent an Image as extending PImage is a pain.
+*/
+class CImage {
+  
+  private PImage image = null;
+  private int x,y,origWidth,origHeight,shrinkWidth,shrinkHeight;
+  
+  // Default Constructor
+  CImage(){}
+
+  /*
+  * Creates an image with the top left corner positioned at x,y.
+  *
+  * Parameters: int x,y - The x,y coordinate of the image
+  *             String imageFileName - The name of the image file to load
+  */
+  CImage(int x, int y, String imageFileName){
+    this(x,y,loadImage(imageFileName));
+  }
+  
+  /*
+  * Stores an image with the top left corner positioned at x,y.
+  *
+  * Parameters: int x,y - The x,y coordinate of the image
+  *             PImage image - The image to store
+  */
+  CImage(int x, int y, PImage image){
+    this.x = x;
+    this.y = y;
+    this.image = image;
+    this.origWidth = image.width;
+    this.origHeight = image.height;
+  }
+
+  /*
+  * Sets this CImage to the PImage provided
+  *
+  * Parameters: int x,y - The top left hand corner location of the image
+  *             PImage - The image to set
+  */
+  public CImage setImage(int x, int y, PImage image){
+    this.x = x;
+    this.y = y;
+    this.image = image;
+    this.origWidth = image.width;
+    this.origHeight = image.height;
+    return this;
+  }
+  
+    // Displays the image at its x,y position
+  public void show() {
+    if (image == null)
+      return;
+    image(image,x,y);
+  }
+  
+  // Will resize the image to the specified shrink size
+  public void shrink(){
+    image.resize(shrinkWidth,shrinkHeight);
+  }
+  
+  // Restores the image to the original size when first created
+  public void restore(){
+    if (image != null)
+      image.resize(origWidth, origHeight);
+  }
+  
+  /*
+  * Moves the images top left corner to the new x,y values 
+  * and shows the image in the new position.
+  */
+  public void moveTo(float x, float y){
+    this.x = (int) x;
+    this.y = (int) y;
+    show();
+  }
+  
+  // Returns if the mouse is within the image
+  public boolean containsMouse(int x, int y){
+    try {
+      return alpha(image.pixels[(y-this.y)*image.width+(x-this.x)]) != 0;
+    } catch (Exception e) {
+      return false;
+    }
+  }
+  
+  // === Setters ===
+  
+  // Changes the size of the image
+  public void setShrinkSize(int w, int h) {
+    shrinkWidth = w;
+    shrinkHeight = h;
+  }
+  
+  // === Getters ===
+  
+  // Returns all pixels in the image
+  public int[] getPixels(){
+    return image.pixels;
+  }
+  
+  // Returns the image
+  public PImage getImage(){
+    return image;
+  }
+  
+    
+  // Returns the x position of the image
+  public int getX(){
+    return x;
+  }
+  
+  // Returns the y position of the image
+  public int getY(){
+    return y;
+  }
+  
+  // Returns the width of the image
+  public int getWidth(){
+    return image != null ? this.image.width : -1;
+  }
+  
+  // Returns the height of the image
+  public int getHeight(){
+    return image != null ? this.image.height : -1;
+  }
+  
+}
