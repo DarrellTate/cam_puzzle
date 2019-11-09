@@ -6,86 +6,8 @@ import java.util.ArrayDeque;
 
 class Puzzle {
   
-  private final color WALL_COLOR = 0x0; //0x29E679; // The wall color in piece template
-  private TreeMap<Integer, PuzzlePiece> puzzlePieces = new TreeMap<Integer, PuzzlePiece>();
-  private ArrayList<SnapPoint> snapPoints = new ArrayList<SnapPoint>();
+  private final int PIECE_CONTAINER_WIDTH = 200;
   
-  private PuzzlePiece selectedPiece = null;
-  private PieceContainer pieceContainer;
-  
-  private final int templateWidth, templateHeight, templateX, templateY;
-  private color background, foreground;
-  private CImage template;
-  
-  /*
-  * Creates a new puzzle based off of an image and a tempalate
-  *
-  * < Template still needs to be added >
-  */
-  Puzzle(CImage pieceTemplate, color foreground, color background) {
-    this.template = pieceTemplate;
-    templateX = pieceTemplate.getX();
-    templateY = pieceTemplate.getY();
-    templateWidth = pieceTemplate.getWidth();
-    templateHeight = pieceTemplate.getHeight();
-    int[] templatePixels = pieceTemplate.getPixels();
-    
-    this.foreground = foreground;
-    this.background = background;
-    pieceContainer = new PieceContainer(templateX + templateWidth, templateY, 200, templateHeight, foreground);
-    
-    color replaceColor = 0x969696;  // Replacement color on template is this
-    int currImageIndex;
-    int pieceID = 0;
-    
-    // This is a very simple flood fill algorithm used to read a black and
-    // white image and convert all white areas into multiple pieces.
-    // The code below is pretty nasty sorry about that.
-    
-    ArrayDeque<Integer> stack = new ArrayDeque<Integer>();
-    for (int i = 0; i < templateWidth * templateHeight; i++){
-      PuzzlePiece puzzlePiece = new PuzzlePiece(this, ++pieceID);
-      stack.push(i);
-      while (stack.size() != 0){
-        currImageIndex = stack.pop();
-        // If current pixel looking at is not within the picture look at another pixel
-        if (currImageIndex < 0 || currImageIndex >= (getWidth()*getHeight()))
-          continue;
-        // If the current pixel is a pixel already seen, replaced, look at another pixel
-        if (isEqualColor(templatePixels[currImageIndex], replaceColor, 0))
-          continue;
-        // If the current pixel is not white, meaning a wall, continue
-        if (isEqualColor(templatePixels[currImageIndex], WALL_COLOR, 255))
-          continue;
-        // Add the pixel from the source image to the piece and find next pixel
-        puzzlePiece.addPixel(currImageIndex, templatePixels[currImageIndex]);
-        templatePixels[currImageIndex] = replaceColor;
-        
-        stack.push(currImageIndex-templateWidth);
-        stack.push(currImageIndex+templateWidth);
-        stack.push(currImageIndex+1);
-        stack.push(currImageIndex-1);
-      }
-      
-      // If the puzzle piece does not have more than 10 pixels ignore it
-      if (puzzlePiece.isValidPuzzlePiece()){
-        PuzzlePiece pp = puzzlePiece.convertToCImage();
-        puzzlePieces.put(pp.getID(), pp);
-        snapPoints.add(new SnapPoint(pp.getX(),pp.getY(),pp.getID(), pp.getID()));
-      }
-    }
-  }
-  
-  // Returns if two colors are equal, with a range of ignorance.
-  private boolean isEqualColor(color c1, color c2, int diffRange){
-    return Math.abs(colorSum(c1)-colorSum(c2)) <= diffRange;
-  }
-  
-  // Returns the sum of the red,green,blue values added
-  private int colorSum(color c) {
-    return (c & 0xff) + (c >> 8 & 0xff) + (c >> 16 & 0xff);
-  }
-
   /*
   * Will move all pieces on the puzzle board to the PieceContainer which
   * holds all the pieces.
@@ -93,8 +15,8 @@ class Puzzle {
   public void scramble(){
     // Removing all pieces from the SnapPoints
     for (SnapPoint sp : snapPoints){
-      pieceContainer.addPuzzlePiece(puzzlePieces.get(sp.getCurrPieceID()));
-      puzzlePieces.remove(sp.getCurrPieceID());
+      pieceContainer.addPuzzlePiece(sp.getCurrPiece());
+      puzzlePieces.remove(sp.getCurrPiece().getID());
       sp.setCurrPiece(null);
     }
     forceRenderAll();
@@ -108,50 +30,153 @@ class Puzzle {
     return true;
   }
   
-  // Sets the selected piece within the puzzle at the x,y location
+  // Redraws the puzzle with the specified color puzzle background
+  public void render(){
+    pieceContainer.render();
+    
+    if (selectedPiece != null)
+      selectedPiece.moveTo(mouseX-selectedPiece.getWidth()/2,mouseY-selectedPiece.getHeight()/2);
+    
+    // Rendering the puzzle board
+    stroke(foreground);
+    noFill();
+    rect(getX(), getY(), getWidth(), getHeight());
+    pieceTemplate.show();
+    // Rendering the puzzle pieces that are on the board
+    for (PuzzlePiece pp : puzzlePieces.values())
+      pp.show();
+      
+    if (selectedPiece != null)
+      selectedPiece.show();
+  }
+  
+    // Sets the selected piece within the puzzle at the x,y location
   public void selectPiece(int x, int y){
     if (selectedPiece != null) // Do not select if a piece is already selected
       return;
-      
-    selectedPiece = pieceContainer.getPiece(x,y);
     
-    if (selectedPiece == null){
-      for (PuzzlePiece pp : puzzlePieces.values()){
+    selectedPiece = pieceContainer.getPiece(x,y); // Check if piece is in holding container
+    if (selectedPiece == null) // Piece is not in holding container
+      for (PuzzlePiece pp : puzzlePieces.values())
         if (pp.containsMouse(x, y)){
           selectedPiece = pp;
-        }
-      }
-    }
-    
-    // Removing the puzzle piece from the SnapPoint
-    if (selectedPiece != null){
-      selectedPiece.restore();
-      for (SnapPoint sp : snapPoints)
-        if (sp.getCurrPieceID() == selectedPiece.getID())
-          sp.setCurrPiece(null);
-    }
+          for (SnapPoint sp : snapPoints) // Remove the selected piece from SnapPoint
+            if (sp.getCurrPiece() == selectedPiece)
+              sp.setCurrPiece(null);
+          }
+   if (selectedPiece != null)
+     selectedPiece.restore();
   }
   
-  // Removes selected puzzle piece in the puzzle and moves it
-  // to the nearest SnapPoint
+  // Removes selected puzzle piece in the puzzle and moves to nearst SnapPoint
   public void deselectPiece(){
     if (selectedPiece == null)
       return;
     
-    if (mouseX > getX()+getWidth()){
+    if (mouseX > X+W){ // Add to piece container / outside puzzle board
       pieceContainer.addPuzzlePiece(selectedPiece);
-      selectedPiece = null;
-      return;
-    }else{
+    } else {
       pieceContainer.removePuzzlePiece(selectedPiece);
       puzzlePieces.put(selectedPiece.getID(), selectedPiece);
+      placeAtClosestSnapPoint(selectedPiece);
     }
+    selectedPiece = null;
+  }
+  
+  
+  
+  /*
+  * =========================================================
+  * Everything below this line is probably not need to be known
+  * so no need to worry about it.
+  *
+  * Enter at your own expense.
+  * =========================================================
+  */
+  
+  private final int X, Y, W, H;
+  
+  private TreeMap<Integer, PuzzlePiece> puzzlePieces = new TreeMap<Integer, PuzzlePiece>();
+  private ArrayList<SnapPoint> snapPoints = new ArrayList<SnapPoint>();
+  
+  private color background, foreground;
+  private PuzzlePiece selectedPiece = null;
+  private PieceContainer pieceContainer;
+  
+  private CImage pieceTemplate;
+  
+  /*
+  * Creates a new puzzle based off of an image and a tempalate
+  *
+  * < Template still needs to be added >
+  */
+  Puzzle(CImage picture, CImage pieceTemplate, color foreground, color background) {
+    this.pieceTemplate = pieceTemplate;
+    X = pieceTemplate.getX();
+    Y = pieceTemplate.getY();
+    W = pieceTemplate.getWidth();
+    H = pieceTemplate.getHeight();
+    this.foreground = foreground;
+    this.background = background;
+    
+    pieceContainer = new PieceContainer(X + W, Y, PIECE_CONTAINER_WIDTH, H);
+    pieceContainer.setColorScheme(foreground, background);
+    generatePuzzlePieces(picture.clone(), pieceTemplate.clone());
+  }
+  
+  // This is a very simple flood fill algorithm used to read a black and
+  // white image and convert all white areas into multiple pieces.
+  // The code below is pretty nasty sorry about that.
+  private void generatePuzzlePieces(CImage picture, CImage pieceTemplate){
+    int[] templatePixels = pieceTemplate.getPixels();
+    int maxPixelIndex = W*H;
+    
+    color replaceColor = 0x969696;  // Replacement color on template is this
+    int currIndex;
+    
+    ArrayDeque<Integer> stack = new ArrayDeque<Integer>();
+    for (int i = 0; i < maxPixelIndex; i++){
+      PuzzlePiece puzzlePiece = new PuzzlePiece(this, i);
+      stack.push(i);
+      while (stack.size() != 0){
+        currIndex = stack.pop();
+        if (currIndex < 0 || currIndex >= maxPixelIndex)
+          continue;
+        if (templatePixels[currIndex] == replaceColor)
+          continue;
+        // If the current pixel is not white, meaning a wall, continue
+        if (colorSum(templatePixels[currIndex]) < 255)
+          continue;
+
+        puzzlePiece.addPixel(currIndex, picture.getImage().pixels[currIndex]);
+        templatePixels[currIndex] = replaceColor;
+        
+        stack.push(currIndex-pieceTemplate.getWidth());
+        stack.push(currIndex+pieceTemplate.getWidth());
+        stack.push(currIndex+1);
+        stack.push(currIndex-1);
+      }
+      
+      if (puzzlePiece.isValidPuzzlePiece()){
+        PuzzlePiece pp = puzzlePiece.convertToCImage();
+        puzzlePieces.put(pp.getID(), pp);
+        snapPoints.add(new SnapPoint(pp));
+      }
+    }
+  }
+  
+  // Returns the sum of the red,green,blue values added
+  private int colorSum(color c) {
+    return (c & 0xff) + (c >> 8 & 0xff) + (c >> 16 & 0xff);
+  }
+  
+  private void placeAtClosestSnapPoint(PuzzlePiece pp){
     // Adding PuzzlePiece to closest snap point not to pretty
     int minDistance = MAX_INT;
     SnapPoint closestPoint = null;
     for (SnapPoint sp : snapPoints){
       if (!sp.isOccupied()) {
-        int tempDist = distanceToSnapPoint(selectedPiece, sp);
+        int tempDist = distanceToSnapPoint(pp, sp);
         if (tempDist < minDistance){
           minDistance = tempDist;
           closestPoint = sp;
@@ -160,12 +185,15 @@ class Puzzle {
     }
     
     if (closestPoint == null){
-      selectedPiece = null;
+      return;
+    } else if (closestPoint.getX() + pp.getWidth() > X+W) {
+      pieceContainer.addPuzzlePiece(pp);
+    } else if (closestPoint.getY() + selectedPiece.getHeight() > Y+H) {
+      pieceContainer.addPuzzlePiece(selectedPiece);
     } else {
       selectedPiece.moveTo(closestPoint.getX(), closestPoint.getY());
       closestPoint.setCurrPiece(selectedPiece);
       forceRenderAll();
-      selectedPiece = null;
     }
   }
   
@@ -174,44 +202,30 @@ class Puzzle {
   }
   
   private void forceRenderAll(){
-    fill(background);
-    rect(getX(), getY(), getWidth(), getHeight());
-    for (PuzzlePiece pp : puzzlePieces.values())
-      pp.show();
-  }
-  
-  // Redraws the puzzle with the specified color puzzle background
-  public void render(){
     pieceContainer.render();
-    
-    if (selectedPiece != null)
-      selectedPiece.moveTo(mouseX-selectedPiece.getWidth()/2,mouseY-selectedPiece.getHeight()/2);
     
     stroke(foreground);
     fill(background);
     rect(getX(), getY(), getWidth(), getHeight());
     for (PuzzlePiece pp : puzzlePieces.values())
       pp.show();
-    if (selectedPiece != null)
-      selectedPiece.show();
-    //template.show();
   }
   
     
-  public int getX() {
-    return templateX;
+  public final int getX() {
+    return X;
   }
   
-  public int getY() {
-    return templateY;
+  public final int getY() {
+    return Y;
   }
   
-  public int getWidth(){
-    return templateWidth;
+  public final int getWidth(){
+    return W;
   }
   
-  public int getHeight() {
-    return templateHeight;
+  public final int getHeight() {
+    return H;
   }
   
 }

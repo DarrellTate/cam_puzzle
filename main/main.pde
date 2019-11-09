@@ -1,41 +1,8 @@
-<<<<<<< HEAD
-private final String image = "resources/puzzle1.jpg";
+private final String templateImage = "resources/puzzle2.jpg";
+private final String pictureImage = "resources/puzzle1.jpg";
 private Puzzle puzzle;
 
-void setup(){
-  size(1000,800);
-  puzzle = new Puzzle(new CImage(0,0,image), color(41,230,118), 0x0);
-  puzzle.scramble();
-  
-  /*
-   Info regarding the previous 2 lines
-  
-  new Puzzle(new CImage(int x, int y, <int width>, <int height>, puzzle piece tempate, foreground color, background color)
-                                      // <width> and <height> are optional parameters
-      // Foreground the the border around the puzzle
-      // Background is the color behind the puzzle pieces
-      
-  puzzle.scramble - Move the pieces to the right side container holding unplaced pieces
-  */
-}
-
-void draw(){
-  surface.setTitle("Frame: " + frameRate);
-  puzzle.render(); // Redraws the board
-}
-
-void mousePressed() {
-  puzzle.selectPiece(mouseX, mouseY);
-}
-
-void mouseReleased() {
-  puzzle.deselectPiece();
-  if (puzzle.isComplete()) // Returns true if the puzzle is correctly solved
-    println("Puzzle Is Solved");
-}
-=======
-private final String image = "resources/puzzle1.jpg";
-private Puzzle puzzle;
+private final color GREEN = color(41,230,118);
 
 /* 
 Colors:
@@ -83,19 +50,23 @@ int page3Counter = 0;
 int delayDone = 0; // This variable is just to make sure we only do the 2 second delay once
 
 void setup(){
-  size(1200,700);
+  size(1600,900);
   background(0);
   // a 600x600 "canvas". for dragging the puzzle pieces into
-  checkeredImage = loadImage("resources/checkered600x600.png"); 
+  //checkeredImage = loadImage("resources/checkered600x600.png"); 
 
   showPage0();
-  //puzzle = new Puzzle(new CImage(0,0,image));
   
+  //CImage picture = new CImage(0,0,600,600,loadImage(pictureImage)); // The image from camera
+  //CImage template = new CImage(0,0,600,600,loadImage(templateImage));
+  //puzzle = new Puzzle(picture, template, GREEN, 0x0); 
+  //puzzle.scramble();
 }
 
 void draw(){
+  background(0);
   //surface.setTitle("Frame: " + frameRate);
-  //puzzle.render(0);
+  //puzzle.render(); // Redraws the board ever frame
   
   if (page==0) {
     typeMessage();
@@ -126,6 +97,7 @@ void mousePressed() {
 
 void mouseReleased() {
   //puzzle.deselectPiece();
+  //println(puzzle.isComplete());
 }
 
 /*        
@@ -186,14 +158,14 @@ void showPage1() {
     }
   } else if (page1Counter==2) {
     // TODO: now we set up the checkered image in the middle 
-    image(checkeredImage,300,75);
-    
+    //image(checkeredImage,300,75);
     // TODO: include and scramble the puzzle pieces
     
     page1Counter++;
     
   } else if (page1Counter==3) {
     // at this point, timer will keep getting decreased
+    puzzle.render();
     setTimer(0,0,--timer,50);
     
     // TODO: if timer gets to 0, set gameWon to 1
@@ -269,4 +241,3 @@ void typeMessagePage3() {
     
   }
 }
->>>>>>> origin/master

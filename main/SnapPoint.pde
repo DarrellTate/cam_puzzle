@@ -1,41 +1,40 @@
 class SnapPoint {
   
-  private final int CORRECT_PIECE_ID;
-  private final int x,y;
-  private int currPieceID;
+  private final int PROPER_PIECE_ID;
+  private final int X,Y;
+  private PuzzlePiece currPiece;
   
-  SnapPoint(int x, int y, int properPieceID, int currPieceID){
-    this.x = x;
-    this.y = y;
-    this.currPieceID = currPieceID;
-    CORRECT_PIECE_ID = properPieceID;
+  SnapPoint(PuzzlePiece properPiece){
+    this.X = properPiece.getX();
+    this.Y = properPiece.getY();
+    PROPER_PIECE_ID = properPiece.getID();
+    currPiece = properPiece;
   }
   
   public boolean isOccupied(){
-    return currPieceID != -1;
+    return currPiece != null;
   }
   
   public boolean isCorrect() {
-    return CORRECT_PIECE_ID == currPieceID;
+    if (currPiece == null)
+      return false;
+    return PROPER_PIECE_ID == currPiece.getID();
   }
   
   public void setCurrPiece(PuzzlePiece pp){
-    if (pp == null)
-      currPieceID = -1;
-    else
-      currPieceID = pp.getID();
+    currPiece = pp;
   }
   
-  public int getCurrPieceID(){
-    return currPieceID;
+  public PuzzlePiece getCurrPiece(){
+    return currPiece;
   }
   
   public int getX() {
-    return x;
+    return X;
   }
   
   public int getY() {
-    return y;
+    return Y;
   }
   
 }

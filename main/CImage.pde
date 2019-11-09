@@ -43,6 +43,10 @@ class CImage {
     this(x,y,image);
     image.resize(w,h);
   }
+  
+  public CImage clone() {
+    return new CImage(getX(), getY(), getWidth(), getHeight(),this.getImage().copy());
+  }
 
   /*
   * Sets this CImage to the PImage provided
@@ -104,6 +108,7 @@ class CImage {
   
   // Returns all pixels in the image
   public int[] getPixels(){
+    image.loadPixels();
     return image.pixels;
   }
   
@@ -111,7 +116,6 @@ class CImage {
   public PImage getImage(){
     return image;
   }
-  
     
   // Returns the x position of the image
   public int getX(){

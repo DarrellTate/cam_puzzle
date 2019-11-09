@@ -76,7 +76,7 @@ class PuzzlePiece extends CImage {
       }
     }
     super.setImage(minX+puzzle.getX(), minY+puzzle.getY(), pieceImg);
-    super.show(); // Display the newly created piece
+    //super.show(); // Display the newly created piece
     return this;
   }
 }
