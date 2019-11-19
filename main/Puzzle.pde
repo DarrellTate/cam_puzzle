@@ -112,3 +112,4 @@ class Puzzle {
     selectedPiece.moveTo(mouseX-selectedPiece.getWidth()/2,mouseY-selectedPiece.getHeight()/2);
   }
 }
+ 
