@@ -3,7 +3,7 @@
 */
 class CImage {
   
-  private PImage image = null;
+  private PImage image;
   private int x,y,origWidth,origHeight,shrinkWidth,shrinkHeight;
   
   // Default Constructor
@@ -19,6 +19,12 @@ class CImage {
     this(x,y,loadImage(imageFileName));
   }
   
+  // Allows for resizing
+  CImage(int x, int y, int w, int h, String imageFileName){
+    this(x,y,imageFileName);
+    image.resize(w,h);
+  }
+  
   /*
   * Stores an image with the top left corner positioned at x,y.
   *
@@ -31,6 +37,15 @@ class CImage {
     this.image = image;
     this.origWidth = image.width;
     this.origHeight = image.height;
+  }
+  
+  CImage(int x, int y, int w, int h, PImage image){
+    this(x,y,image);
+    image.resize(w,h);
+  }
+  
+  public CImage clone() {
+    return new CImage(getX(), getY(), getWidth(), getHeight(),this.getImage().copy());
   }
 
   /*
@@ -57,7 +72,8 @@ class CImage {
   
   // Will resize the image to the specified shrink size
   public void shrink(){
-    image.resize(shrinkWidth,shrinkHeight);
+    if (shrinkWidth > 0 && shrinkHeight > 0)
+      image.resize(shrinkWidth,shrinkHeight);
   }
   
   // Restores the image to the original size when first created
@@ -73,7 +89,6 @@ class CImage {
   public void moveTo(float x, float y){
     this.x = (int) x;
     this.y = (int) y;
-    show();
   }
   
   // Returns if the mouse is within the image
@@ -85,18 +100,15 @@ class CImage {
     return false;
   }
   
-  // === Setters ===
-  
   // Changes the size of the image
   public void setShrinkSize(int w, int h) {
     shrinkWidth = w;
     shrinkHeight = h;
   }
   
-  // === Getters ===
-  
   // Returns all pixels in the image
   public int[] getPixels(){
+    image.loadPixels();
     return image.pixels;
   }
   
@@ -104,7 +116,6 @@ class CImage {
   public PImage getImage(){
     return image;
   }
-  
     
   // Returns the x position of the image
   public int getX(){

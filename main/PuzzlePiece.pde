@@ -1,20 +1,48 @@
-/*
-* Class that represents a piece within the Puzzle class.
-* A PuzzlePiece is an extension of a CImage
-*
-* This class's main methods come from the CImage class
-*
-* Everything in this is pretty much not important
-*/
 class PuzzlePiece extends CImage {
   
+  // Returns the ID of this puzzle piece.
+  // Utilized by SnapPoint to determine if this piece is in the right spot
+  public int getID(){
+    return PIECE_ID;
+  }
+  
+  // True if there are more than 20 pixels in a puzzle piece.
+  // Utilized by the Puzzle class to determine if the piece should be remembered
+  public boolean isValidPuzzlePiece(){
+    return pixelMap.size() >= 20;
+  }
+  
+  // Overriding from CImage class
+  public void moveTo(int x, int y){
+    super.moveTo(x,y);
+    glitchPiece();
+  }
+  
+  //TODO: PUT PIECE GLITCH CODE HERE
+  private void glitchPiece(){
+    // TODO: CODE GOES HERE
+  }
+      
+  /*
+  * =========================================================
+  * Everything below this line is not used in any other class
+  * so no need to worry about it.
+  *
+  * Enter at your own expense.
+  * =========================================================
+  */
+  private final int PIECE_ID;
+  private Puzzle puzzle;
   private HashMap<Integer, Integer> pixelMap;
   private int minX, minY, maxX, maxY;
   
-  PuzzlePiece(){
+  PuzzlePiece(Puzzle puzzle, int pieceID){
+    this.puzzle = puzzle;
+    this.PIECE_ID = pieceID;
     pixelMap = new HashMap<Integer, Integer>();
-    minX = width + 1;
-    minY = height + 1;
+    
+    minX = puzzle.getWidth()+1;
+    minY = puzzle.getHeight()+1;
     maxX = -1;
     maxY = -1;
   }
@@ -22,8 +50,8 @@ class PuzzlePiece extends CImage {
   // Takes the pixel index from the template image and the color at that index
   public void addPixel(int i, color c) {
     pixelMap.put(i,c);
-    int x = i%width;
-    int y = i/height;
+    int x = i%puzzle.getWidth();
+    int y = i/puzzle.getHeight();
     
     // Finding the range of the piece. Used for converting to a CImage
     minX = x < minX ? x : minX;
@@ -37,23 +65,18 @@ class PuzzlePiece extends CImage {
     int w = maxX-minX;
     int h = maxY-minY;
     int originalImageIndex = 0;
-    PImage pieceImg = createImage(w,h,ARGB); // This is the image that will be used to represent the image
+    PImage pieceImg = createImage(w,h,ARGB); // This is the image that will be used to represent the piece
     for (int x = 0; x < w; x++){
       for (int y = 0; y < h; y++){
-        originalImageIndex = (y+minY)*width+(x+minX);
+        originalImageIndex = (y+minY)*puzzle.getWidth()+(x+minX);
         if (pixelMap.containsKey(originalImageIndex))
           pieceImg.pixels[y*w+x] = pixelMap.get(originalImageIndex); // Use pixel specified by addPixel
         else
-          pieceImg.pixels[y*w+x] = color(150,0,0,0); // Pixels not specified by addPixel will be transparent
+          pieceImg.pixels[y*w+x] = color(0,0,0,0); // Pixels not specified by addPixel will be transparent
       }
     }
-    super.setImage(minX, minY, pieceImg);
-    super.show(); // Display the newly created piece
+    super.setImage(minX+puzzle.getX(), minY+puzzle.getY(), pieceImg);
+    //super.show(); // Display the newly created piece
     return this;
-  }
-  
-  // A valid piece must have at least 10 pixels
-  public boolean isValidPuzzlePiece(){
-    return pixelMap.size() >= 10;
   }
 }
