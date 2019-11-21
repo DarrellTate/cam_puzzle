@@ -136,5 +136,14 @@ class CImage {
   public int getHeight(){
     return image != null ? this.image.height : -1;
   }
-  
+
+  public void updatePixels() {
+    image.updatePixels();
+  }
+
+  public void setPixel(int pixelIndex, color c) {
+      if (alpha(image.pixels[pixelIndex]) == 0)
+          return;
+      image.pixels[pixelIndex] = c;
+  }
 }
