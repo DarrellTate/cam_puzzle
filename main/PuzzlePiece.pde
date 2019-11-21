@@ -20,7 +20,9 @@ class PuzzlePiece extends CImage {
   
   //TODO: PUT PIECE GLITCH CODE HERE
   private void glitchPiece(){
-    // TODO: CODE GOES HERE
+    // Only methods you should need
+    // this.setPixel(pixelIndex, pixelColor) < Same to PImage.pixels[index] = color >
+    // this.updatePixels()                   < Same to PImage.updatePixels()>
   }
       
   /*
