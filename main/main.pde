@@ -11,6 +11,7 @@ Colors:
 */
 /*
                                     * * * * * TODO * * * * *
+~ This is a test                                   
       
 ~ Uncomment out the actual puzzle feature and add it to page 1 where the timer is
     * make it fit the 600x600 checkered canvas
