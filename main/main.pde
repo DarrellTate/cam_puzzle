@@ -36,7 +36,7 @@ String page0Message = "";
 
 // For Page 1: The Puzzle Game
 int page1Counter = 0; // This is to create the effect of generating page 1's features
-int timer = 0; // RANGE: [0, 1200]
+int timer = width; // RANGE: [0, 1200]
 int gameWon = 0;
 PImage checkeredImage;
 int puzzleInitialized = 0; // 0 = false, 1 = true
@@ -51,7 +51,8 @@ int page3Counter = 0;
 int delayDone = 0; // This variable is just to make sure we only do the 2 second delay once
 
 void setup(){
-  size(1600,900);
+  //size(1600,900);
+  fullScreen();
   background(0);
   // a 600x600 "canvas". for dragging the puzzle pieces into
   checkeredImage = loadImage("resources/checkered600x600.png"); 
@@ -61,14 +62,13 @@ void setup(){
 }
 
 void setupPuzzle() {
-  CImage picture = new CImage(0,0,600,600,loadImage(pictureImage)); // The image from camera
-  CImage template = new CImage(0,0,600,600,loadImage(templateImage));
+  CImage picture = new CImage(250,100,600,600,loadImage(pictureImage)); // The image from camera
+  CImage template = new CImage(250,100,600,600,loadImage(templateImage));
   puzzle = new Puzzle(picture, template, GREEN, 0x0); 
   puzzle.scramble();
 }
 
 void draw(){
-  //background(0);
   surface.setTitle("Frame: " + frameRate);
   
   
@@ -157,7 +157,7 @@ void showPage1() {
   } 
   // set up timer
   else if (page1Counter==1) {
-    if (timer!=1200) {
+    if (timer!=width) {
       timer += 20;
       setTimer(0,0,timer,50);
     } else {
@@ -197,7 +197,7 @@ void showPage1() {
 }
 void setTimer(int theX, int theY, int theW, int theH) {
   fill(0);
-  rect(theX,theY,1200,theH);
+  rect(theX,theY,width,theH);
   fill(41,230,118);
   rect(theX,theY,theW,theH);
 }
