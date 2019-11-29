@@ -4,11 +4,6 @@ private Puzzle puzzle;
 
 private final color GREEN = color(41,230,118);
 
-/* 
-Colors:
-  Black: 0 0 0
-  Green: 41 230 118
-*/
 /*
                                     * * * * * TODO * * * * *
       
@@ -27,6 +22,9 @@ Colors:
 
 int page = 0;
 PFont font;
+
+// For WebCam
+WebCam webCamSnap;
 
 // For Page 0: The Messages
 float x = 200;
@@ -51,18 +49,17 @@ int page3Counter = 0;
 int delayDone = 0; // This variable is just to make sure we only do the 2 second delay once
 
 void setup(){
-  //size(1600,900);
+  // for unkown reasons, you MUST set webcam first ... possibly to set "this"?
+  webCamSnap = new WebCam(this);
   fullScreen();
   background(0);
   // a 600x600 "canvas". for dragging the puzzle pieces into
   checkeredImage = loadImage("resources/checkered600x600.png"); 
-
   showPage0();
-  
 }
 
 void setupPuzzle() {
-  CImage picture = new CImage(250,100,600,600,loadImage(pictureImage)); // The image from camera
+  CImage picture = new CImage(250,100,600,600, webCamSnap.video);
   CImage template = new CImage(250,100,600,600,loadImage(templateImage));
   puzzle = new Puzzle(picture, template, GREEN, 0x0); 
   puzzle.scramble();
@@ -70,7 +67,6 @@ void setupPuzzle() {
 
 void draw(){
   surface.setTitle("Frame: " + frameRate);
-  
   
   if (page==0) {
     typeMessage();
@@ -195,6 +191,14 @@ void showPage1() {
   }
   
 }
+
+// Event Listener for Capture devise
+// updates the capture buffer with the current available capture frame
+// must exist in main so that the event can be triggered!!!
+void captureEvent(Capture video){
+  video.read();
+}
+
 void setTimer(int theX, int theY, int theW, int theH) {
   fill(0);
   rect(theX,theY,width,theH);
