@@ -89,6 +89,7 @@ class CImage {
   public void moveTo(float x, float y){
     this.x = (int) x;
     this.y = (int) y;
+    // TODO: This method gets called every frame, BAD, because of Caleb, probably not to be honest.
   }
   
   // Returns if the mouse is within the image

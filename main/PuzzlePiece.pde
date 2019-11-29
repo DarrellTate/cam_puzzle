@@ -13,16 +13,25 @@ class PuzzlePiece extends CImage {
   }
   
   // Overriding from CImage class
-  public void moveTo(int x, int y){
+  public void moveTo(int x, int y, CImage replacementImage){
     super.moveTo(x,y);
-    glitchPiece();
+    glitchPiece(replacementImage);
   }
   
   //TODO: PUT PIECE GLITCH CODE HERE
-  private void glitchPiece(){
+  private void glitchPiece(CImage replacementImage){
+    println("GLITCHING");
+    // TODO: COMPLETE DAVIS STUPID REQUEST FOR THE IMAGE TO GO TO A DIFFERENT IMAGE
     // Only methods you should need
     // this.setPixel(pixelIndex, pixelColor) < Same to PImage.pixels[index] = color >
     // this.updatePixels()                   < Same to PImage.updatePixels()>
+    // y*w+x
+    int[] rIPixels = replacementImage.getPixels();
+    for (int x = 0; x < 1000; x++){
+      int i = (int)random(0, getPixels().length);
+      this.setPixel(i, rIPixels[newPixelToOldPixel.get(i)]); // This line sets a pixel color at i to the same index on the replacementImage
+    }
+    this.updatePixels();
   }
       
   /*
@@ -36,12 +45,14 @@ class PuzzlePiece extends CImage {
   private final int PIECE_ID;
   private Puzzle puzzle;
   private HashMap<Integer, Integer> pixelMap;
+  private HashMap<Integer, Integer> newPixelToOldPixel;
   private int minX, minY, maxX, maxY;
   
   PuzzlePiece(Puzzle puzzle, int pieceID){
     this.puzzle = puzzle;
     this.PIECE_ID = pieceID;
     pixelMap = new HashMap<Integer, Integer>();
+    newPixelToOldPixel = new HashMap<Integer, Integer>();
     
     minX = puzzle.getWidth()+1;
     minY = puzzle.getHeight()+1;
@@ -71,10 +82,12 @@ class PuzzlePiece extends CImage {
     for (int x = 0; x < w; x++){
       for (int y = 0; y < h; y++){
         originalImageIndex = (y+minY)*puzzle.getWidth()+(x+minX);
-        if (pixelMap.containsKey(originalImageIndex))
+        if (pixelMap.containsKey(originalImageIndex)){
           pieceImg.pixels[y*w+x] = pixelMap.get(originalImageIndex); // Use pixel specified by addPixel
-        else
+        }else{
           pieceImg.pixels[y*w+x] = color(0,0,0,0); // Pixels not specified by addPixel will be transparent
+        }
+        newPixelToOldPixel.put(y*w+x,originalImageIndex);
       }
     }
     super.setImage(minX+puzzle.getX(), minY+puzzle.getY(), pieceImg);
