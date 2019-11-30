@@ -271,4 +271,3 @@ void typeMessagePage3() {
     surface.setSize((int)random(1500), (int)random(700));
   }
 }
->>>>>>> master
