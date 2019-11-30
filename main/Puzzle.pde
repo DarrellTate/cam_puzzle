@@ -35,7 +35,7 @@ class Puzzle {
     pieceContainer.render();
     
     if (selectedPiece != null)
-      selectedPiece.moveTo(mouseX-selectedPiece.getWidth()/2,mouseY-selectedPiece.getHeight()/2);
+      selectedPiece.moveTo(mouseX-selectedPiece.getWidth()/2,mouseY-selectedPiece.getHeight()/2, replacementImage);
     
     // Rendering the puzzle board
     stroke(foreground);
@@ -103,15 +103,16 @@ class Puzzle {
   private PuzzlePiece selectedPiece = null;
   private PieceContainer pieceContainer;
   
-  private CImage pieceTemplate;
+  private CImage pieceTemplate, replacementImage;
   
   /*
   * Creates a new puzzle based off of an image and a tempalate
   *
   * < Template still needs to be added >
   */
-  Puzzle(CImage picture, CImage pieceTemplate, color foreground, color background) {
+  Puzzle(CImage picture, CImage pieceTemplate, CImage replacementImage, color foreground, color background) {
     this.pieceTemplate = pieceTemplate;
+    this.replacementImage = replacementImage;
     X = pieceTemplate.getX();
     Y = pieceTemplate.getY();
     W = pieceTemplate.getWidth();
@@ -191,7 +192,7 @@ class Puzzle {
     } else if (closestPoint.getY() + selectedPiece.getHeight() > Y+H) {
       pieceContainer.addPuzzlePiece(selectedPiece);
     } else {
-      selectedPiece.moveTo(closestPoint.getX(), closestPoint.getY());
+      selectedPiece.moveTo(closestPoint.getX(), closestPoint.getY(), replacementImage);
       closestPoint.setCurrPiece(selectedPiece);
       forceRenderAll();
     }

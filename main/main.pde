@@ -51,8 +51,9 @@ int delayDone = 0; // This variable is just to make sure we only do the 2 second
 void setup(){
   // for unkown reasons, you MUST set webcam first ... possibly to set "this"?
   webCamSnap = new WebCam(this);
-  fullScreen();
-  background(0);
+  //fullScreen();
+  size(1200,900);
+  //background(0);
   // a 600x600 "canvas". for dragging the puzzle pieces into
   checkeredImage = loadImage("resources/checkered600x600.png"); 
   showPage0();
@@ -61,7 +62,7 @@ void setup(){
 void setupPuzzle() {
   CImage picture = new CImage(250,100,600,600, webCamSnap.video);
   CImage template = new CImage(250,100,600,600,loadImage(templateImage));
-  puzzle = new Puzzle(picture, template, GREEN, 0x0); 
+  puzzle = new Puzzle(picture, template, picture, GREEN, 0x0); 
   puzzle.scramble();
 }
 
@@ -252,9 +253,5 @@ void typeMessagePage3() {
     // TODO: do some trippy shit here
     // not just make screen size change
     surface.setSize((int)random(1500), (int)random(700));
-    
-    
-    
-    
   }
 }
