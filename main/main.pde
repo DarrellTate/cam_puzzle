@@ -1,5 +1,4 @@
-private final String templateImage = "resources/puzzle2.jpg";
-private final String pictureImage = "resources/puzzle1.jpg";
+private final String templateImage = "resources/Template 1.png";
 private Puzzle puzzle;
 
 private final color GREEN = color(41,230,118);
@@ -24,7 +23,9 @@ int page = 0;
 PFont font;
 
 // For WebCam
-WebCam webCamSnap;
+WebCam webCamSnap1, webCamSnap2;
+boolean camsStarted = false;
+boolean loadedMenu = false;
 
 // For Page 0: The Messages
 float x = 200;
@@ -50,20 +51,34 @@ int delayDone = 0; // This variable is just to make sure we only do the 2 second
 
 void setup(){
   // for unkown reasons, you MUST set webcam first ... possibly to set "this"?
-  webCamSnap = new WebCam(this);
-  //fullScreen();
-  size(1200,900);
-  //background(0);
+  thread("setupCams"); // Running a new thread to prevent the screen from locking
+  fullScreen();
+  //size(1200,900);
+  background(0);
   // a 600x600 "canvas". for dragging the puzzle pieces into
   checkeredImage = loadImage("resources/checkered600x600.png"); 
   showPage0();
 }
 
+void setupCams(){
+  webCamSnap1 = new WebCam(this);
+  webCamSnap2 = new WebCam(this);
+  camsStarted = true;
+}
+
 void setupPuzzle() {
-  CImage picture = new CImage(250,100,600,600, webCamSnap.video);
-  CImage template = new CImage(250,100,600,600,loadImage(templateImage));
-  puzzle = new Puzzle(picture, template, picture, GREEN, 0x0); 
-  puzzle.scramble();
+  try {
+    CImage picture = new CImage(250,100,600,600, webCamSnap1.video);
+    webCamSnap1.video.stop();
+    CImage replacementPicture = new CImage(250,100,600,600, loadImage("resources/puzzle1.jpg"));
+    webCamSnap2.video.stop();
+    CImage template = new CImage(250,100,600,600,loadImage(templateImage));
+    puzzle = new Puzzle(picture, template, replacementPicture, GREEN, 0x0); 
+    picture = null;
+    puzzle.scramble();
+  } catch (Exception e) {
+    println("ERROR: webCamSnap Buffer Under Flow");
+  }
 }
 
 void draw(){
@@ -86,7 +101,7 @@ void mousePressed() {
   
   // TODO: if page is 0:
     // if mouseX and mouseY are within the ranges of the button
-  if (page==0) {
+  if (page==0 && loadedMenu) {
     if (mouseX >= 500 && mouseX <= 700) {
       if (mouseY >= 500 && mouseY <= 600) {
         page=1;
@@ -127,9 +142,10 @@ void typeMessage() {
     fill(41,230,118);
     textAlign(LEFT);
     text(page0Message.substring(0,textCounter),x,y);
-  } else if (textCounter==page0Message.length()) {
+  } else if (textCounter==page0Message.length() && camsStarted) {
     showPage0Button();
     textCounter++;
+    loadedMenu = true;
   }
 }
 void showPage0Button() {
