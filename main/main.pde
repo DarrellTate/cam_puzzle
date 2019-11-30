@@ -1,14 +1,8 @@
-private final String templateImage = "resources/puzzle2.jpg";
-private final String pictureImage = "resources/puzzle1.jpg";
+private final String templateImage = "resources/Template 1.png";
 private Puzzle puzzle;
 
 private final color GREEN = color(41,230,118);
 
-/* 
-Colors:
-  Black: 0 0 0
-  Green: 41 230 118
-*/
 /*
                                     * * * * * TODO * * * * *
       
@@ -27,6 +21,11 @@ Colors:
 
 int page = 0;
 PFont font;
+
+// For WebCam
+WebCam webCamSnap1, webCamSnap2;
+boolean camsStarted = false;
+boolean loadedMenu = false;
 
 // For Page 0: The Messages
 float x = 200;
@@ -51,26 +50,39 @@ int page3Counter = 0;
 int delayDone = 0; // This variable is just to make sure we only do the 2 second delay once
 
 void setup(){
-  //size(1600,900);
+  // for unkown reasons, you MUST set webcam first ... possibly to set "this"?
+  thread("setupCams"); // Running a new thread to prevent the screen from locking
   fullScreen();
+  //size(1200,900);
   background(0);
   // a 600x600 "canvas". for dragging the puzzle pieces into
   checkeredImage = loadImage("resources/checkered600x600.png"); 
-
   showPage0();
-  
+}
+
+void setupCams(){
+  webCamSnap1 = new WebCam(this);
+  webCamSnap2 = new WebCam(this);
+  camsStarted = true;
 }
 
 void setupPuzzle() {
-  CImage picture = new CImage(250,100,600,600,loadImage(pictureImage)); // The image from camera
-  CImage template = new CImage(250,100,600,600,loadImage(templateImage));
-  puzzle = new Puzzle(picture, template, GREEN, 0x0); 
-  puzzle.scramble();
+  try {
+    CImage picture = new CImage(250,100,600,600, webCamSnap1.video);
+    webCamSnap1.video.stop();
+    CImage replacementPicture = new CImage(250,100,600,600, loadImage("resources/puzzle1.jpg"));
+    webCamSnap2.video.stop();
+    CImage template = new CImage(250,100,600,600,loadImage(templateImage));
+    puzzle = new Puzzle(picture, template, replacementPicture, GREEN, 0x0); 
+    picture = null;
+    puzzle.scramble();
+  } catch (Exception e) {
+    println("ERROR: webCamSnap Buffer Under Flow");
+  }
 }
 
 void draw(){
   surface.setTitle("Frame: " + frameRate);
-  
   
   if (page==0) {
     typeMessage();
@@ -89,7 +101,7 @@ void mousePressed() {
   
   // TODO: if page is 0:
     // if mouseX and mouseY are within the ranges of the button
-  if (page==0) {
+  if (page==0 && loadedMenu) {
     if (mouseX >= 500 && mouseX <= 700) {
       if (mouseY >= 500 && mouseY <= 600) {
         page=1;
@@ -130,9 +142,10 @@ void typeMessage() {
     fill(41,230,118);
     textAlign(LEFT);
     text(page0Message.substring(0,textCounter),x,y);
-  } else if (textCounter==page0Message.length()) {
+  } else if (textCounter==page0Message.length() && camsStarted) {
     showPage0Button();
     textCounter++;
+    loadedMenu = true;
   }
 }
 void showPage0Button() {
@@ -181,9 +194,6 @@ void showPage1() {
     puzzle.render();
     setTimer(0,0,--timer,50);
     
-    if (gameWon==1)
-      page=2;
-    
     // TODO: if timer gets to 0, set gameWon to 1
     if (timer==0) {
       if (gameWon==1) {
@@ -198,6 +208,14 @@ void showPage1() {
   }
   
 }
+
+// Event Listener for Capture devise
+// updates the capture buffer with the current available capture frame
+// must exist in main so that the event can be triggered!!!
+void captureEvent(Capture video){
+  video.read();
+}
+
 void setTimer(int theX, int theY, int theW, int theH) {
   fill(0);
   rect(theX,theY,width,theH);
@@ -251,9 +269,6 @@ void typeMessagePage3() {
     // TODO: do some trippy shit here
     // not just make screen size change
     surface.setSize((int)random(1500), (int)random(700));
-    
-    
-    
-    
   }
 }
+>>>>>>> master

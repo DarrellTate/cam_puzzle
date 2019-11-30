@@ -8,6 +8,16 @@ class CImage {
   
   // Default Constructor
   CImage(){}
+  
+  /*
+  * Creates an image with the top left corner positioned at x,y.
+  *
+  * Parameters: int x,y - The x,y coordinate of the image
+  *             Capture capture - The Capture object
+  */
+  CImage(int x, int y, int w, int h, WebCam capture){
+    this(x,y,w,h,capture.video.get(0,0,capture.video.width,capture.video.height));
+  }
 
   /*
   * Creates an image with the top left corner positioned at x,y.
@@ -89,6 +99,7 @@ class CImage {
   public void moveTo(float x, float y){
     this.x = (int) x;
     this.y = (int) y;
+    // TODO: This method gets called every frame, BAD, because of Caleb, probably not to be honest.
   }
   
   // Returns if the mouse is within the image
@@ -136,5 +147,14 @@ class CImage {
   public int getHeight(){
     return image != null ? this.image.height : -1;
   }
-  
+
+  public void updatePixels() {
+    image.updatePixels();
+  }
+
+  public void setPixel(int pixelIndex, color c) {
+      if (alpha(image.pixels[pixelIndex]) == 0)
+          return;
+      image.pixels[pixelIndex] = c;
+  }
 }
