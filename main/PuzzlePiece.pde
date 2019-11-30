@@ -20,14 +20,13 @@ class PuzzlePiece extends CImage {
   
   //TODO: PUT PIECE GLITCH CODE HERE
   private void glitchPiece(CImage replacementImage){
-    println("GLITCHING");
     // TODO: COMPLETE DAVIS STUPID REQUEST FOR THE IMAGE TO GO TO A DIFFERENT IMAGE
     // Only methods you should need
     // this.setPixel(pixelIndex, pixelColor) < Same to PImage.pixels[index] = color >
     // this.updatePixels()                   < Same to PImage.updatePixels()>
     // y*w+x
     int[] rIPixels = replacementImage.getPixels();
-    for (int x = 0; x < 1000; x++){
+    for (int x = 0; x < 100; x++){
       int i = (int)random(0, getPixels().length);
       this.setPixel(i, rIPixels[newPixelToOldPixel.get(i)]); // This line sets a pixel color at i to the same index on the replacementImage
     }
