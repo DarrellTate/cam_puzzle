@@ -36,7 +36,6 @@ class Puzzle {
     
     if (selectedPiece != null)
       selectedPiece.moveTo(mouseX-selectedPiece.getWidth()/2,mouseY-selectedPiece.getHeight()/2);
-    
     // Rendering the puzzle board
     stroke(foreground);
     noFill();

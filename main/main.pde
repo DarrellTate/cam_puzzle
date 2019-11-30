@@ -181,6 +181,9 @@ void showPage1() {
     puzzle.render();
     setTimer(0,0,--timer,50);
     
+    if (gameWon==1)
+      page=2;
+    
     // TODO: if timer gets to 0, set gameWon to 1
     if (timer==0) {
       if (gameWon==1) {
