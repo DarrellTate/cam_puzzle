@@ -1,6 +1,8 @@
 private final String templateImage = "resources/Template 1.png";
 private Puzzle puzzle;
-
+// Array of templates. 
+// TODO: Add to this array as you add more templates
+String[] templates = {"Template1.png", "Template2.png"};
 private final color GREEN = color(41,230,118);
 
 /*
@@ -66,13 +68,20 @@ void setupCams(){
   camsStarted = true;
 }
 
+String generateRandomTemplate() {
+    int randomIndex = (int) random(templates.length);
+    return templates[randomIndex];
+}
+
 void setupPuzzle() {
   try {
     CImage picture = new CImage(250,100,600,600, webCamSnap1.video);
     webCamSnap1.video.stop();
     CImage replacementPicture = new CImage(250,100,600,600, loadImage("resources/puzzle1.jpg"));
     webCamSnap2.video.stop();
-    CImage template = new CImage(250,100,600,600,loadImage(templateImage));
+    
+    String templateName = generateRandomTemplate();
+    CImage template = new CImage(250,100,600,600,loadImage("resources/" + templateName));
     puzzle = new Puzzle(picture, template, replacementPicture, GREEN, 0x0); 
     picture = null;
     puzzle.scramble();
