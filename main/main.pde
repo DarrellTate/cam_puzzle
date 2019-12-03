@@ -68,7 +68,7 @@ void setupCams(){
 }
 
 String generateRandomTemplate() {
-    int randomIndex = (int) random(templates.length);
+    int randomIndex = (int) random(1,6);
     return templates[randomIndex];
 }
 
@@ -149,6 +149,7 @@ void typeMessage() {
     textAlign(LEFT);
     text(page0Message.substring(0,textCounter),x,y);
   } else if (textCounter==page0Message.length() && camsStarted) {
+    delay(500);
     showPage0Button();
     textCounter++;
     loadedMenu = true;
@@ -212,7 +213,7 @@ void showPage1() {
     if (timer==0) {
       if (gameWon==1) {
         // Set page to 2: The winning Screen
-        delay(3);
+        delay(3000);
         page = 2;
       } else {
         // Set page to 3: Virus infection
