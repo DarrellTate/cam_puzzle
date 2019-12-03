@@ -212,7 +212,7 @@ void showPage1() {
     if (timer==0) {
       if (gameWon==1) {
         // Set page to 2: The winning Screen
-        delay(5);
+        delay(3);
         page = 2;
       } else {
         // Set page to 3: Virus infection
