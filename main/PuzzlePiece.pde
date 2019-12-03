@@ -23,6 +23,9 @@ class PuzzlePiece extends CImage {
     // Only methods you should need
     // this.setPixel(pixelIndex, pixelColor) < Same to PImage.pixels[index] = color >
     // this.updatePixels()                   < Same to PImage.updatePixels()>
+    for (int i = 0; i < 10; i++)
+    this.setPixel((int)random(0, getPixels().length), color(0,255,0));
+    this.updatePixels();
   }
       
   /*

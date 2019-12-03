@@ -1,4 +1,4 @@
-private final String templateImage = "resources/puzzle2.jpg";
+private final String templateImage = "resources/Star.png";
 private final String pictureImage = "resources/puzzle1.jpg";
 private Puzzle puzzle;
 
@@ -70,8 +70,7 @@ void setupPuzzle() {
 
 void draw(){
   surface.setTitle("Frame: " + frameRate);
-  
-  
+    
   if (page==0) {
     typeMessage();
   } else if (page==1) {
@@ -180,6 +179,12 @@ void showPage1() {
     // at this point, timer will keep getting decreased
     puzzle.render();
     setTimer(0,0,--timer,50);
+    
+    if (puzzle.isComplete())
+    gameWon=1;
+    
+    if (gameWon==1)
+      page=2;
     
     // TODO: if timer gets to 0, set gameWon to 1
     if (timer==0) {
