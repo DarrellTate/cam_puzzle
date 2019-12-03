@@ -146,7 +146,7 @@ class Puzzle {
         if (templatePixels[currIndex] == replaceColor)
           continue;
         // If the current pixel is not white, meaning a wall, continue
-        if (colorSum(templatePixels[currIndex]) < 255)
+        if (colorSum(templatePixels[currIndex]) == colorSum(color(41,230,118)))
           continue;
 
         puzzlePiece.addPixel(currIndex, picture.getImage().pixels[currIndex]);

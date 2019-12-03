@@ -2,6 +2,7 @@ private Puzzle puzzle;
 // Array of templates. 
 // TODO: Add to this array as you add more templates
 String[] templates = {"Glass1.png", "Glass2.png", "Glass3.png", "Glass4.png", "Glass5.png", "Glass6.png", "Glass7.png", "Glass8.png", "Glass9.png", "Glass10.png", "Glass11.png", "Glass12.png", "Glass13.png"};
+String[] replacement = {"r1.jpg", "r2.jpg", "r3.jpg", "r4.jpg"};
 
 private final color GREEN = color(41,230,118);
 /*
@@ -36,7 +37,7 @@ String page0Message = "";
 
 // For Page 1: The Puzzle Game
 int page1Counter = 0; // This is to create the effect of generating page 1's features
-int timer = width; // RANGE: [0, 1200]
+float timer = (float) width; 
 int gameWon = 0;
 PImage checkeredImage;
 int puzzleInitialized = 0; // 0 = false, 1 = true
@@ -200,7 +201,8 @@ void showPage1() {
   } else if (page1Counter==3) {
     // at this point, timer will keep getting decreased
     puzzle.render();
-    setTimer(0,0,--timer,50);
+    timer -= 0.5;
+    setTimer(0,0,timer,50);
     
     // TODO: if timer gets to 0, set gameWon to 1
     if (timer==0) {
@@ -224,7 +226,7 @@ void captureEvent(Capture video){
   video.read();
 }
 
-void setTimer(int theX, int theY, int theW, int theH) {
+void setTimer(int theX, int theY, float theW, int theH) {
   fill(0);
   rect(theX,theY,width,theH);
   fill(41,230,118);
