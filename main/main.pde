@@ -193,6 +193,9 @@ void showPage1() {
       setupPuzzle();
       puzzleInitialized=1;
     }
+    
+    
+    
     page1Counter++;
     
   } else if (page1Counter==3) {
@@ -200,6 +203,10 @@ void showPage1() {
     puzzle.render();
     timer -= 0.5;
     setTimer(0,0,timer,50);
+    
+    if (puzzle.isComplete()) {
+      gameWon = 1;
+    }
     
     // TODO: if timer gets to 0, set gameWon to 1
     if (timer==0) {
