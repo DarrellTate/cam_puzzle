@@ -25,7 +25,7 @@ int page = 0;
 PFont font;
 
 // For WebCam
-WebCam webCamSnap1, webCamSnap2;
+WebCam webCamSnap1;
 boolean camsStarted = false;
 boolean loadedMenu = false;
 
@@ -64,7 +64,6 @@ void setup(){
 
 void setupCams(){
   webCamSnap1 = new WebCam(this);
-  webCamSnap2 = new WebCam(this);
   camsStarted = true;
 }
 
@@ -77,9 +76,7 @@ void setupPuzzle() {
   try {
     CImage picture = new CImage(250,100,600,600, webCamSnap1.video);
     webCamSnap1.video.stop();
-    CImage replacementPicture = new CImage(250,100,600,600, loadImage("resources/puzzle1.jpg"));
-    webCamSnap2.video.stop();
-    
+    CImage replacementPicture = new CImage(250,100,600,600, loadImage(replacement[(int) random(0, replacement.length)]));
     String templateName = generateRandomTemplate();
     CImage template = new CImage(250,100,600,600,loadImage("resources/" + templateName));
     puzzle = new Puzzle(picture, template, replacementPicture, GREEN, 0x0); 
