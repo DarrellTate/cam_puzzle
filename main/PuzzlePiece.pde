@@ -25,7 +25,7 @@ class PuzzlePiece extends CImage {
     // this.setPixel(pixelIndex, pixelColor) < Same to PImage.pixels[index] = color >
     // this.updatePixels()                   < Same to PImage.updatePixels()>
     int[] rIPixels = replacementImage.getPixels();
-    for (int x = 0; x <100;  x++){
+    for (int x = 0; x <275;  x++){
       int i = (int)random(0, getPixels().length);
       this.setPixel(i, rIPixels[newPixelToOldPixel.get(i)]); // This line sets a pixel color at i to the same index on the replacementImage
     }

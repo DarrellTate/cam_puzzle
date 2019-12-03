@@ -2,7 +2,7 @@ private Puzzle puzzle;
 // Array of templates. 
 // TODO: Add to this array as you add more templates
 String[] templates = {"Glass1.png", "Glass2.png", "Glass3.png", "Glass4.png", "Glass5.png", "Glass6.png", "Glass7.png", "Glass8.png", "Glass9.png", "Glass10.png", "Glass11.png", "Glass12.png", "Glass13.png"};
-String[] replacement = {"r1.jpg", "r2.jpg", "r3.jpg", "r4.jpg"};
+String[] replacement = {"r1.jpg", "r2.jpg", "r3.png", "r4.jpg", "r5.jpg"};
 
 private final color GREEN = color(41,230,118);
 /*
@@ -76,7 +76,7 @@ void setupPuzzle() {
   try {
     CImage picture = new CImage(250,100,600,600, webCamSnap1.video);
     webCamSnap1.video.stop();
-    CImage replacementPicture = new CImage(250,100,600,600, loadImage(replacement[(int) random(0, replacement.length)]));
+    CImage replacementPicture = new CImage(250,100,600,600, loadImage("resources/" + replacement[(int) random(0, replacement.length)]));
     String templateName = generateRandomTemplate();
     CImage template = new CImage(250,100,600,600,loadImage("resources/" + templateName));
     puzzle = new Puzzle(picture, template, replacementPicture, GREEN, 0x0); 
