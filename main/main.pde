@@ -1,25 +1,8 @@
 private Puzzle puzzle;
-// Array of templates. 
-// TODO: Add to this array as you add more templates
 String[] templates = {"Glass1.png", "Glass2.png", "Glass3.png", "Glass4.png", "Glass5.png", "Glass6.png", "Glass7.png", "Glass8.png", "Glass9.png", "Glass10.png", "Glass11.png", "Glass12.png", "Glass13.png"};
 String[] replacement = {"r1.jpg", "r2.jpg", "r3.png", "r4.jpg", "r5.jpg"};
 
 private final color GREEN = color(41,230,118);
-/*
-                                    * * * * * TODO * * * * *
-      
-~ Uncomment out the actual puzzle feature and add it to page 1 where the timer is
-    * make it fit the 600x600 checkered canvas
-~ Finish page 3: the losing screen (the "virus infection") - add more trippy shit to it
-~ Create mechanism for determining if puzzle is complete
-    * if puzzle is complete, just set global variable gameWon to 1
-    * this will automatically switch page to page 2, the winning screen
-~ Finish page 2: the winning screen - just make sure it works fine
-~ Incorporate the webcam feature so we can create puzzle pieces out of webcame images
-    * We can implement this between pages 0 and 1, page 0b or something
-~ Implement glitching feature to puzzle pieces
-    * figure out when to glitch each piece too
-*/
 
 int page = 0;
 PFont font;
@@ -103,10 +86,6 @@ void draw(){
 }
 
 void mousePressed() {
-  
-  
-  // TODO: if page is 0:
-    // if mouseX and mouseY are within the ranges of the button
   if (page==0 && loadedMenu) {
     if (mouseX >= 500 && mouseX <= 700) {
       if (mouseY >= 500 && mouseY <= 600) {
@@ -186,17 +165,10 @@ void showPage1() {
       page1Counter++;
     }
   } else if (page1Counter==2) {
-    // TODO: now we set up the checkered image in the middle 
-    //image(checkeredImage,300,75);
-    // TODO: include and scramble the puzzle pieces
-    
     if (puzzleInitialized==0) {
       setupPuzzle();
       puzzleInitialized=1;
     }
-    
-    
-    
     page1Counter++;
     
   } else if (page1Counter==3) {
@@ -209,8 +181,6 @@ void showPage1() {
       delay(2000);
       page = 2;
     }
-    
-    // TODO: if timer gets to 0, go to losing page
     if (timer==0) {
       page = 3;
     }
@@ -276,8 +246,6 @@ void typeMessagePage3() {
       delay(2000);
       delayDone = 1;
     }
-    // TODO: do some trippy shit here
-    // not just make screen size change
     surface.setSize((int)random(1500), (int)random(700));
   }
 }
