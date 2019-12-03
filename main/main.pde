@@ -1,10 +1,9 @@
-private final String templateImage = "resources/Template 1.png";
 private Puzzle puzzle;
 // Array of templates. 
 // TODO: Add to this array as you add more templates
 String[] templates = {"Template1.png", "Template2.png"};
-private final color GREEN = color(41,230,118);
 
+private final color GREEN = color(41,230,118);
 /*
                                     * * * * * TODO * * * * *
       
