@@ -206,19 +206,13 @@ void showPage1() {
     setTimer(0,0,timer,50);
     
     if (puzzle.isComplete()) {
-      gameWon = 1;
+      delay(2000);
+      page = 2;
     }
     
-    // TODO: if timer gets to 0, set gameWon to 1
+    // TODO: if timer gets to 0, go to losing page
     if (timer==0) {
-      if (gameWon==1) {
-        // Set page to 2: The winning Screen
-        delay(3000);
-        page = 2;
-      } else {
-        // Set page to 3: Virus infection
-        page = 3;
-      }
+      page = 3;
     }
     
   }
